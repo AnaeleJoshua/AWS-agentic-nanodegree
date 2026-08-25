@@ -1,0 +1,30 @@
+# Technical Documentation: Caching for Product Listings
+
+## Overview
+This document outlines the implementation of caching for product listings to improve performance during peak hours. The caching mechanism utilizes Redis to store results, which expire after 5 minutes before refetching from the database.
+
+## Problem Statement
+The product page experienced slow load times during peak hours, leading to spikes in database CPU usage.
+
+## Solution Implemented
+### Caching Mechanism
+- **Cache Hit:** Serve results from Redis.
+- **Cache Miss:** Fetch results from the database, cache them in Redis, and set an expiration time of 5 minutes.
+
+### Handling Specific Scenarios
+- **Cache Miss:** If the requested product data is not found in the cache, the system falls back to querying the database. The retrieved data is then cached for subsequent requests.
+- **Product Update:** When a product is updated or saved, the corresponding cache entry is cleared to ensure that the latest data is fetched on the next request.
+- **Sold-Out Items:** There is a known tradeoff where sold-out items may still appear as available for up to 5 minutes. This has been deemed acceptable for the current implementation.
+
+## Known Tradeoffs
+- Sold-out items may display as available for up to 5 minutes due to the cache TTL (Time To Live).
+
+## To-Do List
+1. **Add Metrics:** Implement tracking for cache hit rates to monitor the effectiveness of the caching strategy.
+2. **Tune TTL:** Evaluate the frequency of product changes and adjust the 5-minute TTL accordingly to optimize performance and data freshness.
+
+## Deployment
+- The caching solution was deployed on Tuesday.
+
+## Conclusion
+The introduction of Redis caching for product listings has addressed the performance issues experienced during peak hours. Continuous monitoring and potential adjustments will ensure that the system remains efficient and responsive.
